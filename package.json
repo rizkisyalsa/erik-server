@@ -6,7 +6,8 @@
   "scripts": {
     "start": "cross-env APP_ENV=prod node src/app.js",
     "dev": "cross-env APP_ENV=dev nodemon src/app.js",
-    "test": "cross-env APP_ENV=test jest"
+    "test": "cross-env APP_ENV=test jest",
+    "migration": "node src/core/migration"
   },
   "repository": {
     "type": "git",
