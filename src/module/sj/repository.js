@@ -1,7 +1,5 @@
 const { pool } = require("../../core/database/pg");
 
-const moment = require("moment");
-
 const getSj = async (limit, page, search) => {
   let result = [];
   let offset = 0;

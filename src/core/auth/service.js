@@ -34,7 +34,7 @@ const passwordIsMatch = async (username, password) => {
     });
     return {
       sts: 200,
-      user: { token: "Bearer " + token }
+      user: { token: token }
     };
   } catch (err) {
     logger.error(err.message);

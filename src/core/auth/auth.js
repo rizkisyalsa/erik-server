@@ -4,7 +4,6 @@ const config = require("../configs");
 module.exports = function(req, res, next) {
   // Get token from header
   let token = req.header("Authentication");
-  token = token.slice(7, token.length);
 
   // Check if not token
   if (!token) {

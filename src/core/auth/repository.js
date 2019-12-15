@@ -1,4 +1,4 @@
-const { pool } = require("../database");
+const { pool } = require("../database/pg");
 
 const getAuth = async username => {
   const text = "SELECT * FROM users WHERE username = $1";
