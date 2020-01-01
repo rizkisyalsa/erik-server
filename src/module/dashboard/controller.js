@@ -4,19 +4,16 @@ const moment = require("moment");
 
 router.get("/lastseven", async (req, res) => {
    let result = await Dashboard.getlastSevenDaysPo();
-  // data = data.map(row => {
-  //    return {
-  //       tgl_po: moment(row.tgl_po).format('DD MMM YYYY'),
-  //       jumlah: row.jumlah,
-  //       status: row.status
-  //    }
-  // })
-  console.log(result.data)
-   let tgl_po = result.tgl_po.map(e => {
-      return moment(e.tgl_po).format("DD MMM YYYY");
-   });
+   // let tgl_po = result.tgl_po.map(e => {
+   //    return moment(e.tgl_po).format("DD MMM YYYY");
+   // });
+   let data = result.data.map(e=>{
+      return {
+         ...e, tgl_po: `${moment(e.tgl_po).format("DD/MM/YYYY")}`
+      }
+   })
 
-   res.json({ tgl_po, result: result.data });
+   res.json(data);
 });
 
 module.exports = router;

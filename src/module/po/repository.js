@@ -31,6 +31,18 @@ const getPo = async (limit, page, search) => {
   }
 };
 
+const getSearchPo = async (start, status, end) => {
+  let query = `select * from po WHERE status = '${status}' AND tgl_po >= '${start}' AND tgl_po < '${end}'`;
+  try {
+    let result = await pool.query(query)
+    return {
+      data: result.rows
+    } 
+  } catch (err) {
+    throw err;
+  }
+}
+
 const addPo = async body => {
   const { nama_plg, nama_brg, jumlah, tgl_krm } = body;
 
@@ -51,12 +63,18 @@ const addPo = async body => {
   }
 };
 
-const updatePo = async (param, data) => {
-  let { status } = data;
-  const query = `UPDATE po SET status = $2 WHERE no_po = $1`;
-  const values = [param, status];
+const updatePo = async (param, status, jumlah, stock, namaBarang) => {
+  let newStock = Number(stock) - Number(jumlah)
+  if(newStock < 0){
+    return {
+      msg: "Stock Barang tidak cukup"
+    };
+  }
+  const query = `UPDATE po SET status = '${status}' WHERE no_po like '${param}'`;
+  const query2 = `UPDATE barang SET accept = '${newStock}' WHERE nama_barang like '${namaBarang}'`;
   try {
-    await pool.query(query, values);
+    await pool.query(query);
+    await pool.query(query2);
     return {
       msg: "Update po berhasil"
     };
@@ -78,9 +96,36 @@ const deletePo = async no_po => {
   }
 };
 
+const getlast30Days = async () => {
+  let query = `select * from po where tgl_po > current_date - interval '30 days'`;
+  try {
+    let result = await pool.query(query)
+    return {
+      data: result.rows
+    } 
+  } catch (err) {
+    throw err;
+  }
+};
+
+const getJumlahBarang = async (namaBarang) => {
+  let query = `select accept from barang where nama_barang like '${namaBarang}'`;
+  try {
+    let result = await pool.query(query)
+    return {
+      data: result.rows
+    } 
+  } catch (err) {
+    throw err;
+  }
+};
+
 module.exports = {
   updatePo,
   getPo,
+  getSearchPo,
   addPo,
-  deletePo
+  deletePo,
+  getlast30Days,
+  getJumlahBarang
 };

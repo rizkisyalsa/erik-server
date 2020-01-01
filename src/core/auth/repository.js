@@ -12,6 +12,17 @@ const getAuth = async username => {
   }
 };
 
+const getAllUser = async () => {
+  const text = "SELECT * FROM users";
+
+  try {
+    const data = await pool.query(text);
+    return data.rows;
+  } catch (err) {
+    throw err;
+  }
+};
+
 const getUser = async id => {
   const text = "SELECT * FROM users WHERE id=$1";
   const value = [id];
@@ -49,9 +60,34 @@ const createUser = async (username, hashPassword, name, role) => {
   }
 };
 
+const setFoto = async (newFoto, id) => {
+  try {
+    await pool.query(`UPDATE users SET foto='${newFoto}' WHERE id=${id}`);
+    return {
+      msg: 'set image success'
+    }
+  } catch (err) {
+    throw err;
+  }
+}
+
+const deleteUser = async (id) => {
+  const query = `DELETE FROM users WHERE id = $1`;
+  const values = [id]
+  try {
+     await pool.query(query, values);
+     return {msg: 'Delete User berhasil'}
+  } catch (err) {
+     throw err
+  }
+}
+
 module.exports = {
   getAuth,
   getUser,
   checkUsername,
-  createUser
+  createUser,
+  setFoto,
+  getAllUser,
+  deleteUser
 };

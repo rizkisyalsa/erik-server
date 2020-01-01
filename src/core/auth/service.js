@@ -3,6 +3,8 @@ const User = require("./repository");
 const jwt = require("jsonwebtoken");
 const config = require("../configs");
 const { logger } = require('../logger')
+const multer = require("multer");
+var path = require("path");
 
 const passwordIsMatch = async (username, password) => {
   try {
@@ -63,18 +65,8 @@ const getLoggedIn = async id => {
   }
 };
 
-const createNewUser = async (createdId, username, password, name, role) => {
+const createNewUser = async (username, password, name, role) => {
   try {
-    let user = await User.getUser(createdId);
-    if (user.role !== "admin") {
-      return {
-        sts: 401,
-        user: {
-          msg: "To create a user, please contact admin"
-        }
-      };
-    }
-
     let userExist = await User.checkUsername(username);
     if (userExist) {
       return {
@@ -104,8 +96,23 @@ const createNewUser = async (createdId, username, password, name, role) => {
   }
 };
 
+const storage = multer.diskStorage({
+   destination: path.join(__dirname, '../../../public/foto/'),
+   filename: function (req, file, cb) {
+      cb(null, "IMAGE-" + Date.now() + path.extname(file.originalname));
+   }
+});
+
+const upload = multer({
+   storage: storage,
+   limits: {
+      fileSize: 10000000
+   },
+}).single("image");
+
 module.exports = {
   passwordIsMatch,
   getLoggedIn,
-  createNewUser
+  createNewUser,
+  upload
 };

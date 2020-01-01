@@ -13,14 +13,14 @@ let migration = async () => {
   try {
     await client.connect();
     await client.query(
-      "CREATE TABLE IF NOT EXISTS users( id serial PRIMARY KEY, username VARCHAR (50) UNIQUE NOT NULL, password VARCHAR (100) NOT NULL, name VARCHAR (50), role VARCHAR (10))"
+      "CREATE TABLE IF NOT EXISTS users( id serial PRIMARY KEY, username VARCHAR (50) UNIQUE NOT NULL, password VARCHAR (100) NOT NULL, name VARCHAR (50), role TEXT, foto TEXT)"
     );
 
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash("admin", salt);
     let queryFirstUser =
       "INSERT INTO users (username, password, name, role) VALUES($1, $2, $3, $4) RETURNING *";
-    let valueFirstUser = ["admin", hashPassword, "admin", "admin"];
+    let valueFirstUser = ["admin", hashPassword, "Super Admin", "admin"];
 
     let res = await client.query(queryFirstUser, valueFirstUser);
     if (res) {
